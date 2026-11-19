@@ -344,6 +344,7 @@ static const gchar *const panel_order[] = {
     "separator",
 
     "display",
+    "system-trust",
     "sound",
     "power",
     "multitasking",

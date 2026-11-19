@@ -1,0 +1,14 @@
+[Desktop Entry]
+Name=System Trust
+Comment=Verified firmware, boot image, and owner-key root of trust
+Exec=gnome-control-center system-trust
+# Translators: Do NOT translate or transliterate this text (this is an icon file name)!
+Icon=org.gnome.Settings-system-trust-symbolic
+Terminal=false
+Type=Application
+NoDisplay=true
+StartupNotify=true
+Categories=GNOME;GTK;Settings;DesktopSettings;X-GNOME-Settings-Panel;X-GNOME-SystemSettings;
+OnlyShowIn=GNOME;
+# Translators: Search terms to find the System Trust panel. Do NOT translate or localize the semicolons! The list MUST also end with a semicolon!
+Keywords=Trust;Security;Firmware;Boot;UKI;YubiKey;FIDO2;PIV;Owner;Attestation;SecureBoot;

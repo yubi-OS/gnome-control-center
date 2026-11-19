@@ -22,6 +22,26 @@ template $CcWindow: Adw.ApplicationWindow {
       child: Adw.ToolbarView {
         [top]
         Adw.HeaderBar {
+          [title]
+          Box {
+            spacing: 8;
+            halign: center;
+            valign: center;
+
+            Image {
+              resource: "/org/gnome/Settings/yubios-header-mark.png";
+              pixel-size: 22;
+            }
+
+            Label {
+              label: "yubiOS";
+
+              styles [
+                "heading",
+              ]
+            }
+          }
+
           ToggleButton search_button {
             icon-name: "edit-find-symbolic";
 
