@@ -77,8 +77,8 @@ jobs:
                 "pkgconfig(tecla)" "pkgconfig(udisks2)" "pkgconfig(upower-glib)" \
                 "pkgconfig(wayland-client)" "pkgconfig(x11)" "pkgconfig(xi)"
               bash packaging/build-rpm.sh
-              rpm -Uvh --oldpackage --replacepkgs --nodigest --nosignature dist-rpms/*.rpm
-              gnome-control-center --list | grep -q "system-trust"
+              rpm -Uvh --oldpackage --replacepkgs --nodigest --nosignature --nodeps dist-rpms/*.rpm
+              XDG_CURRENT_DESKTOP=GNOME gnome-control-center --list | tee /tmp/panels.txt && grep -q "system-trust" /tmp/panels.txt
               test -f /usr/share/applications/gnome-system-trust-panel.desktop
               test -f /usr/share/icons/hicolor/scalable/apps/org.gnome.Settings-system-trust-symbolic.svg
             '

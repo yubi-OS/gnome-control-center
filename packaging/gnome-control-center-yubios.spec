@@ -1,3 +1,4 @@
+%global debug_package %{nil}
 %global tarball_version 51.1
 
 Name:           gnome-control-center
@@ -15,7 +16,7 @@ BuildRequires:  docbook-style-xsl
 BuildRequires:  gcc
 BuildRequires:  gettext
 BuildRequires:  libappstream-glib
-BuildRequires:   libxslt
+BuildRequires:  libxslt
 BuildRequires:  meson >= 0.60.0
 BuildRequires:  ninja-build
 BuildRequires:  pkgconfig(accountsservice) >= 26.27.3
@@ -100,25 +101,32 @@ mkdir -p %{buildroot}%{_datadir}/sounds/gnome/default/alerts
 %files -f %{name}-2.0.lang
 %license COPYING
 %{_bindir}/gnome-control-center
+%{_libexecdir}/gnome-control-center-global-shortcuts-provider
+%{_libexecdir}/gnome-control-center-print-renderer
+%{_libexecdir}/gnome-control-center-search-provider
 %{_datadir}/applications/*.desktop
 %{_datadir}/bash-completion/completions/gnome-control-center
+%{_datadir}/dbus-1/interfaces/org.gnome.GlobalShortcutsRebind.xml
 %{_datadir}/dbus-1/services/org.gnome.Settings.service
 %{_datadir}/dbus-1/services/org.gnome.Settings.SearchProvider.service
 %{_datadir}/dbus-1/services/org.gnome.Settings.GlobalShortcutsProvider.service
 %{_datadir}/gettext/its/gnome-keybindings.its
 %{_datadir}/gettext/its/gnome-keybindings.loc
+%{_datadir}/gettext/its/sounds.its
+%{_datadir}/gettext/its/sounds.loc
 %{_datadir}/glib-2.0/schemas/*.xml
+%{_datadir}/gnome-control-center/keybindings/*
 %{_datadir}/gnome-control-center/pixmaps
 %{_datadir}/gnome-shell/search-providers/org.gnome.Settings.search-provider.ini
+%{_datadir}/icons/gnome-logo-text*.svg
 %{_datadir}/icons/hicolor/*/*/*
 %{_datadir}/man/man1/gnome-control-center.1*
 %{_datadir}/metainfo/org.gnome.Settings.metainfo.xml
+%{_datadir}/pixmaps/faces
+%{_datadir}/pkgconfig/gnome-keybindings.pc
 %{_datadir}/polkit-1/actions/org.gnome.controlcenter.*.policy
 %{_datadir}/polkit-1/rules.d/gnome-control-center.rules
-%{_libexecdir}/cc-remote-login-helper
-%{_libexecdir}/gnome-control-center-search-provider
-%{_libexecdir}/gnome-control-center-global-shortcuts-provider
-%{_datadir}/pkgconfig/gnome-keybindings.pc
+%{_datadir}/sounds/gnome/default/alerts/*
 
 %files filesystem
 %dir %{_datadir}/gnome-control-center
