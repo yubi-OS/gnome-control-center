@@ -1,0 +1,136 @@
+# yubi-OS-owned RPM build & release workflow for gnome-control-center.
+# Builds linux/amd64 (x86_64) + linux/arm64 (aarch64) RPMs natively inside the
+# digest-pinned Fedora 45 bootc container (PINNED.md) and optionally publishes
+# them + SHA256SUMS/SHA512SUMS to a GitHub Release on yubi-OS/gnome-control-center.
+name: yubios-release
+
+on:
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: 'Branch, tag, or commit to build (defaults to yubios)'
+        required: false
+        default: 'yubios'
+        type: string
+      publish_release:
+        description: 'Publish built RPMs to a GitHub Release when true'
+        required: false
+        default: false
+        type: boolean
+      tag:
+        description: 'Release tag name when publish_release=true (e.g. v51.1-yubios.1)'
+        required: false
+        default: 'v51.1-yubios.1'
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  build-rpm:
+    name: Build Fedora 45 RPM (${{ matrix.arch }})
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: amd64
+            rpm_arch: x86_64
+            runner: ubuntu-26.04
+          - arch: arm64
+            rpm_arch: aarch64
+            runner: ubuntu-26.04-arm
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 45
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ inputs.ref || 'yubios' }}
+
+      - name: Build RPMs inside pinned Fedora 45 bootc container
+        env:
+          FEDORA_BOOTC_IMAGE: quay.io/fedora/fedora-bootc@sha256:990ebc2678ff3dbca3f0143c8d5f1a150a2fb0c418888a3bdf218aea109fc1d2 # 45 (45.20261114.0)
+        run: |
+          set -euo pipefail
+          sudo podman run --rm \
+            -v "$PWD:/work:Z" \
+            -w /work \
+            "$FEDORA_BOOTC_IMAGE" \
+            bash -euxc '
+              dnf -y --setopt=install_weak_deps=False install \
+                rpm-build dnf-plugins-core tar gzip findutils \
+                blueprint-compiler chrpath desktop-file-utils docbook-style-xsl \
+                gcc gettext itstool libappstream-glib libxslt meson ninja-build \
+                "pkgconfig(accountsservice)" "pkgconfig(colord)" "pkgconfig(colord-gtk4)" \
+                "pkgconfig(cups)" "pkgconfig(epoxy)" "pkgconfig(fontconfig)" \
+                "pkgconfig(gcr-4)" "pkgconfig(gdk-pixbuf-2.0)" "pkgconfig(gio-2.0)" \
+                "pkgconfig(glib-2.0)" "pkgconfig(gnome-bg-4)" "pkgconfig(gnome-bluetooth-ui-3.0)" \
+                "pkgconfig(gnome-desktop-4)" "pkgconfig(gnome-qr-gtk-4)" \
+                "pkgconfig(gnome-settings-daemon)" "pkgconfig(goa-1.0)" "pkgconfig(goa-backend-1.0)" \
+                "pkgconfig(gsettings-desktop-schemas)" "pkgconfig(gsound)" "pkgconfig(gtk4)" \
+                "pkgconfig(gudev-1.0)" "pkgconfig(ibus-1.0)" "pkgconfig(json-glib-1.0)" \
+                "pkgconfig(libadwaita-1)" "pkgconfig(libgtop-2.0)" "pkgconfig(libnm)" \
+                "pkgconfig(libnma-gtk4)" "pkgconfig(libpulse)" "pkgconfig(libpulse-mainloop-glib)" \
+                "pkgconfig(libsecret-1)" "pkgconfig(libsoup-3.0)" "pkgconfig(libwacom)" \
+                "pkgconfig(libxml-2.0)" "pkgconfig(malcontent-0)" "pkgconfig(mm-glib)" \
+                "pkgconfig(polkit-gobject-1)" "pkgconfig(pwquality)" "pkgconfig(smbclient)" \
+                "pkgconfig(tecla)" "pkgconfig(udisks2)" "pkgconfig(upower-glib)" \
+                "pkgconfig(wayland-client)" "pkgconfig(x11)" "pkgconfig(xi)"
+              bash packaging/build-rpm.sh
+              rpm -Uvh --oldpackage --replacepkgs --nodigest --nosignature dist-rpms/*.rpm
+              gnome-control-center --list | grep -q "system-trust"
+              test -f /usr/share/applications/gnome-system-trust-panel.desktop
+              test -f /usr/share/icons/hicolor/scalable/apps/org.gnome.Settings-system-trust-symbolic.svg
+            '
+
+      - name: Upload built RPMs (${{ matrix.arch }})
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: gnome-control-center-rpms-${{ matrix.arch }}
+          path: dist-rpms/*.rpm
+          if-no-files-found: error
+
+  publish:
+    name: Publish GitHub Release
+    if: ${{ inputs.publish_release == true }}
+    needs: build-rpm
+    runs-on: ubuntu-26.04
+    timeout-minutes: 10
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ inputs.ref || 'yubios' }}
+
+      - name: Download RPM artifacts
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          path: release-rpms
+          merge-multiple: true
+
+      - name: Create GitHub Release with SHA256SUMS and SHA512SUMS
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ inputs.tag }}
+        run: |
+          set -euo pipefail
+          cd release-rpms
+          sha256sum *.rpm | tee SHA256SUMS
+          sha512sum *.rpm | tee SHA512SUMS
+          SRC_SHA="$(git rev-parse HEAD)"
+          {
+            echo "yubiOS fork release of \`gnome-control-center\` (\`${TAG}\`), built from commit \`${SRC_SHA}\` against Fedora 45 (\`51.1-2.yubios.fc45\`)."
+            echo
+            echo "Includes the native **System Trust** panel (\`panels/system-trust/\`: Firmware, Boot image, Owner key, and evidence-bounded Details drawer) plus yubiOS sidebar header branding."
+            echo
+            echo "## SHA-256"
+            echo '```'
+            cat SHA256SUMS
+            echo '```'
+            echo
+            echo "## SHA-512"
+            echo '```'
+            cat SHA512SUMS
+            echo '```'
+          } > NOTES.md
+          gh release create "$TAG" --title "gnome-control-center $TAG" --notes-file NOTES.md *.rpm SHA256SUMS SHA512SUMS
