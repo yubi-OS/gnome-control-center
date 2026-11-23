@@ -228,33 +228,43 @@ probe_runtime_trust (CcSystemTrustPanel *self)
     gboolean has_tpm = g_file_test ("/dev/tpmrm0", G_FILE_TEST_EXISTS) ||
                        g_file_test ("/dev/tpm0", G_FILE_TEST_EXISTS);
 
-    if (has_sb && sb_val == 1 && (!has_setup || setup_val == 0)) {
+    if (has_sb && sb_val == 1 && has_setup && setup_val == 0) {
         apply_status_badge (self->firmware_status_icon, self->firmware_status_label, _("Verified"), "verified");
         gtk_label_set_text (self->firmware_detail_label,
                             has_tpm ? "UEFI SecureBoot=1, SetupMode=0, TPM/fTPM active"
                                     : "UEFI SecureBoot=1, SetupMode=0");
-    } else if (has_sb && setup_val == 1) {
+    } else if (has_setup && setup_val == 1) {
         apply_status_badge (self->firmware_status_icon, self->firmware_status_label, _("Setup Mode"), "warning");
         gtk_label_set_text (self->firmware_detail_label, "UEFI SetupMode=1 (awaiting owner key enrollment)");
     } else {
+        g_autofree gchar *fw_unknown = g_strdup_printf ("UEFI SecureBoot=%s, SetupMode=%s",
+                                                        has_sb ? (sb_val ? "1" : "0") : "unknown",
+                                                        has_setup ? (setup_val ? "1" : "0") : "unknown");
         apply_status_badge (self->firmware_status_icon, self->firmware_status_label, _("Unverified"), "warning");
-        gtk_label_set_text (self->firmware_detail_label, "UEFI SecureBoot not enforcing on this boot");
+        gtk_label_set_text (self->firmware_detail_label, fw_unknown);
     }
 
     g_autofree gchar *cmdline = NULL;
-    gboolean has_composefs = FALSE;
+    g_autofree gchar *mounts = NULL;
+    gboolean has_composefs_karg = FALSE;
+    gboolean has_composefs_mount = FALSE;
     if (g_file_get_contents ("/proc/cmdline", &cmdline, NULL, NULL) && cmdline) {
-        has_composefs = (strstr (cmdline, "composefs=") != NULL);
+        has_composefs_karg = (strstr (cmdline, "composefs=") != NULL);
     }
-    gboolean has_ostree = g_file_test ("/run/ostree-booted", G_FILE_TEST_EXISTS);
-    if (has_composefs || has_ostree) {
+    if (g_file_get_contents ("/proc/mounts", &mounts, NULL, NULL) && mounts) {
+        has_composefs_mount = (strstr (mounts, " / composefs ") != NULL) ||
+                              (strstr (mounts, " /sysroot composefs ") != NULL);
+    }
+    if (has_composefs_karg && has_composefs_mount) {
         apply_status_badge (self->boot_status_icon, self->boot_status_label, _("Verified"), "verified");
         gtk_label_set_text (self->boot_detail_label,
-                            has_composefs ? "composefs digest pinned in kernel cmdline; /usr immutable"
-                                          : "ostree immutable root active");
+                            "composefs digest pinned in kernel cmdline; / mounted as composefs");
+    } else if (has_composefs_karg) {
+        apply_status_badge (self->boot_status_icon, self->boot_status_label, _("Unverified"), "warning");
+        gtk_label_set_text (self->boot_detail_label, "composefs= in /proc/cmdline, but composefs root mount not verified");
     } else {
         apply_status_badge (self->boot_status_icon, self->boot_status_label, _("Unmeasured"), "warning");
-        gtk_label_set_text (self->boot_detail_label, "No composefs/ostree marker in /proc/cmdline");
+        gtk_label_set_text (self->boot_detail_label, "No composefs root mount or kernel cmdline digest");
     }
 
     gboolean enrolled = g_file_test ("/var/lib/yubiOS/.enrolled", G_FILE_TEST_EXISTS);
