@@ -20,6 +20,7 @@ panels = [
   'sharing',
   'sound',
   'system',
+  'system-trust',
   'universal-access',
   'wellbeing',
   'wwan',

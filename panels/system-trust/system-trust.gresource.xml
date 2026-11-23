@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gresources>
+  <gresource prefix="/org/gnome/control-center/system-trust">
+    <file preprocess="xml-stripblanks">cc-system-trust-panel.ui</file>
+    <file>assets/firmware-orbit.png</file>
+    <file>assets/boot-bloom.png</file>
+    <file>assets/owner-tree.png</file>
+  </gresource>
+</gresources>

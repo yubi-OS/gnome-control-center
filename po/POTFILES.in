@@ -201,6 +201,9 @@ panels/system/datetime/cc-tz-dialog.blp
 panels/system/datetime/gnome-datetime-panel.desktop.in
 panels/system/datetime/org.gnome.controlcenter.system.policy.in
 panels/system/gnome-system-panel.desktop.in
+panels/system-trust/cc-system-trust-panel.blp
+panels/system-trust/cc-system-trust-panel.c
+panels/system-trust/gnome-system-trust-panel.desktop.in
 panels/system/region/cc-format-chooser.blp
 panels/system/region/cc-format-chooser.c
 panels/system/region/cc-format-preview.blp

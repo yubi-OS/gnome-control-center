@@ -1,0 +1,361 @@
+using Gtk 4.0;
+using Adw 1;
+
+template $CcSystemTrustPanel: $CcPanel {
+  title: _("System Trust");
+
+  child: Adw.ToolbarView {
+    [top]
+    Adw.HeaderBar {}
+
+    content: ScrolledWindow {
+      hscrollbar-policy: never;
+
+      child: Adw.Clamp {
+        maximum-size: 980;
+        tightening-threshold: 720;
+
+        child: Box {
+          orientation: horizontal;
+          spacing: 24;
+          valign: start;
+          hexpand: true;
+
+          styles [
+            "yubios-trust-root",
+          ]
+
+          Overlay chain_overlay {
+            hexpand: true;
+            valign: start;
+
+            child: Box chain_box {
+              orientation: vertical;
+              spacing: 24;
+              hexpand: true;
+
+              Box firmware_card {
+                orientation: horizontal;
+                spacing: 20;
+                valign: center;
+
+                styles [
+                  "card",
+                  "yubios-trust-card",
+                ]
+
+                Image firmware_emblem {
+                  resource: "/org/gnome/control-center/system-trust/assets/firmware-orbit.png";
+                  pixel-size: 72;
+                  valign: center;
+
+                  styles [
+                    "yubios-trust-emblem",
+                  ]
+                }
+
+                Label {
+                  label: _("Firmware");
+                  xalign: 0.0;
+                  hexpand: true;
+                  valign: center;
+
+                  styles [
+                    "yubios-trust-title",
+                  ]
+                }
+
+                Box {
+                  orientation: horizontal;
+                  spacing: 8;
+                  valign: center;
+
+                  Image firmware_status_icon {
+                    icon-name: "object-select-symbolic";
+                    pixel-size: 14;
+                    valign: center;
+
+                    styles [
+                      "yubios-trust-badge",
+                      "verified",
+                    ]
+                  }
+
+                  Label firmware_status_label {
+                    label: _("Verified");
+                    valign: center;
+
+                    styles [
+                      "yubios-trust-status-text",
+                    ]
+                  }
+                }
+              }
+
+              Box boot_card {
+                orientation: horizontal;
+                spacing: 20;
+                valign: center;
+
+                styles [
+                  "card",
+                  "yubios-trust-card",
+                ]
+
+                Image boot_emblem {
+                  resource: "/org/gnome/control-center/system-trust/assets/boot-bloom.png";
+                  pixel-size: 72;
+                  valign: center;
+
+                  styles [
+                    "yubios-trust-emblem",
+                  ]
+                }
+
+                Label {
+                  label: _("Boot image");
+                  xalign: 0.0;
+                  hexpand: true;
+                  valign: center;
+
+                  styles [
+                    "yubios-trust-title",
+                  ]
+                }
+
+                Box {
+                  orientation: horizontal;
+                  spacing: 8;
+                  valign: center;
+
+                  Image boot_status_icon {
+                    icon-name: "object-select-symbolic";
+                    pixel-size: 14;
+                    valign: center;
+
+                    styles [
+                      "yubios-trust-badge",
+                      "verified",
+                    ]
+                  }
+
+                  Label boot_status_label {
+                    label: _("Verified");
+                    valign: center;
+
+                    styles [
+                      "yubios-trust-status-text",
+                    ]
+                  }
+                }
+              }
+
+              Box owner_card {
+                orientation: horizontal;
+                spacing: 20;
+                valign: center;
+
+                styles [
+                  "card",
+                  "yubios-trust-card",
+                ]
+
+                Image owner_emblem {
+                  resource: "/org/gnome/control-center/system-trust/assets/owner-tree.png";
+                  pixel-size: 72;
+                  valign: center;
+
+                  styles [
+                    "yubios-trust-emblem",
+                  ]
+                }
+
+                Label {
+                  label: _("Owner key");
+                  xalign: 0.0;
+                  hexpand: true;
+                  valign: center;
+
+                  styles [
+                    "yubios-trust-title",
+                  ]
+                }
+
+                Box {
+                  orientation: horizontal;
+                  spacing: 8;
+                  valign: center;
+
+                  Image owner_status_icon {
+                    icon-name: "object-select-symbolic";
+                    pixel-size: 14;
+                    valign: center;
+
+                    styles [
+                      "yubios-trust-badge",
+                      "verified",
+                    ]
+                  }
+
+                  Label owner_status_label {
+                    label: _("Verified");
+                    valign: center;
+
+                    styles [
+                      "yubios-trust-status-text",
+                    ]
+                  }
+                }
+              }
+            };
+
+            [overlay]
+            DrawingArea connector_canvas {
+              can-target: false;
+              hexpand: true;
+              vexpand: true;
+            }
+          }
+
+          Box details_card {
+            orientation: vertical;
+            spacing: 12;
+            vexpand: true;
+
+            styles [
+              "card",
+              "yubios-trust-details-card",
+            ]
+
+            Button details_toggle_button {
+              clicked => $on_details_toggle_clicked_cb(template);
+
+              styles [
+                "flat",
+                "yubios-trust-details-header",
+              ]
+
+              Box {
+                orientation: horizontal;
+                spacing: 12;
+                hexpand: true;
+
+                Label {
+                  label: _("Details");
+                  xalign: 0.0;
+                  hexpand: true;
+
+                  styles [
+                    "heading",
+                  ]
+                }
+
+                Image details_chevron {
+                  icon-name: "go-next-symbolic";
+                  valign: center;
+                }
+              }
+            }
+
+            Revealer details_revealer {
+              transition-type: slide_down;
+              reveal-child: false;
+
+              child: Box {
+                orientation: vertical;
+                spacing: 10;
+
+                Box {
+                  orientation: vertical;
+                  spacing: 2;
+
+                  styles [
+                    "yubios-trust-detail-row",
+                  ]
+
+                  Label {
+                    label: _("Firmware boundary");
+                    xalign: 0.0;
+
+                    styles [
+                      "yubios-trust-detail-key",
+                    ]
+                  }
+
+                  Label firmware_detail_label {
+                    label: "—";
+                    xalign: 0.0;
+                    wrap: true;
+                    selectable: true;
+
+                    styles [
+                      "yubios-trust-detail-val",
+                    ]
+                  }
+                }
+
+                Box {
+                  orientation: vertical;
+                  spacing: 2;
+
+                  styles [
+                    "yubios-trust-detail-row",
+                  ]
+
+                  Label {
+                    label: _("Boot image & composefs");
+                    xalign: 0.0;
+
+                    styles [
+                      "yubios-trust-detail-key",
+                    ]
+                  }
+
+                  Label boot_detail_label {
+                    label: "—";
+                    xalign: 0.0;
+                    wrap: true;
+                    selectable: true;
+
+                    styles [
+                      "yubios-trust-detail-val",
+                    ]
+                  }
+                }
+
+                Box {
+                  orientation: vertical;
+                  spacing: 2;
+
+                  styles [
+                    "yubios-trust-detail-row",
+                  ]
+
+                  Label {
+                    label: _("Owner YubiKey root of trust");
+                    xalign: 0.0;
+
+                    styles [
+                      "yubios-trust-detail-key",
+                    ]
+                  }
+
+                  Label owner_detail_label {
+                    label: "—";
+                    xalign: 0.0;
+                    wrap: true;
+                    selectable: true;
+
+                    styles [
+                      "yubios-trust-detail-val",
+                    ]
+                  }
+                }
+              };
+            }
+          }
+        };
+      };
+    };
+  };
+}

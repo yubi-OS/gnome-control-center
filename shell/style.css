@@ -954,3 +954,82 @@ box.address-config {
 box.route-config {
   margin-top: 24px;
 }
+
+
+/* yubiOS System Trust Panel */
+.yubios-trust-root {
+  padding: 24px 28px;
+}
+
+.yubios-trust-card {
+  border-radius: 16px;
+  padding: 18px 24px;
+  min-height: 96px;
+  background-color: color-mix(in srgb, var(--card-bg-color) 92%, #0d1322 8%);
+  border: 1px solid color-mix(in srgb, currentColor 10%, transparent);
+}
+
+.yubios-trust-emblem {
+  min-width: 72px;
+  min-height: 72px;
+  border-radius: 9999px;
+}
+
+.yubios-trust-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.yubios-trust-badge {
+  border-radius: 9999px;
+  min-width: 20px;
+  min-height: 20px;
+  padding: 2px;
+}
+
+.yubios-trust-badge.verified {
+  background-color: #33d17a;
+  color: #081b10;
+}
+
+.yubios-trust-badge.warning {
+  background-color: #f5c211;
+  color: #1f1700;
+}
+
+.yubios-trust-badge.failed {
+  background-color: #e01b24;
+  color: #ffffff;
+}
+
+.yubios-trust-status-text {
+  font-weight: 500;
+  font-size: 0.98rem;
+}
+
+.yubios-trust-details-card {
+  border-radius: 16px;
+  min-width: 250px;
+  padding: 12px 16px;
+  background-color: color-mix(in srgb, var(--card-bg-color) 92%, #0d1322 8%);
+  border: 1px solid color-mix(in srgb, currentColor 10%, transparent);
+}
+
+.yubios-trust-details-header {
+  padding: 8px 6px;
+  border-radius: 10px;
+}
+
+.yubios-trust-detail-row {
+  padding: 6px 6px;
+}
+
+.yubios-trust-detail-key {
+  font-size: 0.82rem;
+  opacity: 0.72;
+}
+
+.yubios-trust-detail-val {
+  font-family: monospace;
+  font-size: 0.84rem;
+}
