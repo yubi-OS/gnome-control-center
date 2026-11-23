@@ -1,8 +1,8 @@
 %global debug_package %{nil}
-%global tarball_version 51.1
+%global tarball_version 51.2.1
 
 Name:           gnome-control-center
-Version:        51.1
+Version:        51.2.1
 Release:        2.yubios%{?dist}
 Summary:        yubiOS GNOME Settings with System Trust verification panel
 License:        GPL-2.0-or-later AND CC0-1.0
@@ -136,5 +136,5 @@ mkdir -p %{buildroot}%{_datadir}/sounds/gnome/default/alerts
 %dir %{_datadir}/sounds/gnome/default/alerts
 
 %changelog
-* Thu Nov 19 2026 yubi-OS Contributors <security@yubios.org> - 51.1-2.yubios
+* Thu Nov 19 2026 yubi-OS Contributors <security@yubios.org> - 51.2.1-2.yubios
 - Add yubiOS System Trust panel (Firmware, Boot image, Owner key) and sidebar branding

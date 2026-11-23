@@ -18,9 +18,9 @@ on:
         default: false
         type: boolean
       tag:
-        description: 'Release tag name when publish_release=true (e.g. v51.1-yubios.1)'
+        description: 'Release tag name when publish_release=true (e.g. v51.2.1-yubios.1)'
         required: false
-        default: 'v51.1-yubios.1'
+        default: 'v51.2.1-yubios.1'
         type: string
 
 permissions:
@@ -119,7 +119,7 @@ jobs:
           sha512sum *.rpm | tee SHA512SUMS
           SRC_SHA="$(git rev-parse HEAD)"
           {
-            echo "yubiOS fork release of \`gnome-control-center\` (\`${TAG}\`), built from commit \`${SRC_SHA}\` against Fedora 45 (\`51.1-2.yubios.fc45\`)."
+            echo "yubiOS fork release of \`gnome-control-center\` (\`${TAG}\`), built from commit \`${SRC_SHA}\` against Fedora 45 (\`51.2.1-2.yubios.fc45\`)."
             echo
             echo "Includes the native **System Trust** panel (\`panels/system-trust/\`: Firmware, Boot image, Owner key, and evidence-bounded Details drawer) plus yubiOS sidebar header branding."
             echo

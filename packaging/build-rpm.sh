@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 # SPDX-License-Identifier: GPL-2.0-or-later
-# Build gnome-control-center 51.1-2.yubios RPMs inside a Fedora 45 environment.
+# Build gnome-control-center 51.2.1-2.yubios RPMs inside a Fedora 45 environment.
 set -euo pipefail
 
 REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
-VERSION="51.1"
+VERSION="51.2.1"
 RPM_TOPDIR="${RPM_TOPDIR:-/tmp/rpmbuild-gnome-control-center}"
 
 rm -rf "${RPM_TOPDIR}"
