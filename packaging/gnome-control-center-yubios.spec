@@ -96,7 +96,7 @@ This package provides directories for GNOME Control Center panels and sounds.
 %meson_install
 mkdir -p %{buildroot}%{_datadir}/gnome-control-center/keybindings
 mkdir -p %{buildroot}%{_datadir}/sounds/gnome/default/alerts
-%find_lang %{name}-2.0 --with-gnome
+%find_lang %{name}-2.0 --with-gnome --all-name
 
 %files -f %{name}-2.0.lang
 %license COPYING
