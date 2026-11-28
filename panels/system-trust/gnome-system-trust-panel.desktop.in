@@ -8,7 +8,7 @@ Terminal=false
 Type=Application
 NoDisplay=true
 StartupNotify=true
-Categories=GNOME;GTK;Settings;DesktopSettings;X-GNOME-Settings-Panel;X-GNOME-SystemSettings;
+Categories=GNOME;GTK;Settings;HardwareSettings;X-GNOME-Settings-Panel;X-GNOME-DevicesSettings;
 OnlyShowIn=GNOME;
 # Translators: Search terms to find the System Trust panel. Do NOT translate or localize the semicolons! The list MUST also end with a semicolon!
 Keywords=Trust;Security;Firmware;Boot;UKI;YubiKey;FIDO2;PIV;Owner;Attestation;SecureBoot;
